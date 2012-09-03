@@ -7,6 +7,25 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Raytracer</name>
 	<description>A simple raytracer written in Java</description>
+	<dependencies>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+			<version>1.9.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.9</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.marvinproject</groupId>
+			<artifactId>marvin</artifactId>
+			<version>1.4.1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/marvin_1.4.1.jar</systemPath>
+		</dependency>
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
@@ -19,6 +38,13 @@
 							<mainClass>raytracer.gui.Main</mainClass>
 						</manifest>
 					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
 				</configuration>
 			</plugin>
 		</plugins>
