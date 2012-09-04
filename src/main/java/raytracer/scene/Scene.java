@@ -1,5 +1,7 @@
 package raytracer.scene;
 
+import raytracer.light.Light;
+import raytracer.material.MaterialColor;
 import raytracer.primitive.Point;
 import raytracer.primitive.Vector;
 
@@ -12,6 +14,10 @@ public class Scene {
 	private float cameraAngle;
 	private int cameraResolutionX;
 	private int cameraResolutionY;
+	
+	//Simple lighting
+	private MaterialColor background;
+	private Light ambientLight;
 
 	public Scene() {
 	}
@@ -62,5 +68,21 @@ public class Scene {
 
 	public void setCameraResolutionY(int cameraResolutionY) {
 		this.cameraResolutionY = cameraResolutionY;
+	}
+
+	public MaterialColor getBackground() {
+		return background;
+	}
+
+	public void setBackground(MaterialColor background) {
+		this.background = background;
+	}
+
+	public Light getAmbientLight() {
+		return ambientLight;
+	}
+
+	public void setAmbientLight(Light ambientLight) {
+		this.ambientLight = ambientLight;
 	}
 }
