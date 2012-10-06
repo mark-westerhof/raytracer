@@ -1,7 +1,11 @@
 package raytracer.scene;
 
-import raytracer.light.Light;
-import raytracer.material.MaterialColor;
+import java.awt.image.BufferedImage;
+
+import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
+
+import raytracer.material.Color;
 import raytracer.primitive.Point;
 import raytracer.primitive.Vector;
 
@@ -14,13 +18,12 @@ public class Scene {
 	private float cameraAngle;
 	private int cameraResolutionX;
 	private int cameraResolutionY;
-	
-	//Simple lighting
-	private MaterialColor background;
-	private Light ambientLight;
 
-	public Scene() {
-	}
+	// Output image & progress bar for feedback
+	private BufferedImage image;
+	private JProgressBar progressBar;
+	private int progress = 0;
+	private int progressInterval;
 
 	public Point getCameraOrigin() {
 		return cameraOrigin;
@@ -70,19 +73,30 @@ public class Scene {
 		this.cameraResolutionY = cameraResolutionY;
 	}
 
-	public MaterialColor getBackground() {
-		return background;
+	public void initialize() {
+		image = new BufferedImage(cameraResolutionX, cameraResolutionY, BufferedImage.TYPE_INT_RGB);
+		progressInterval = (int) (0.1 * cameraResolutionX * cameraResolutionY);
 	}
 
-	public void setBackground(MaterialColor background) {
-		this.background = background;
+	public synchronized void updateImage(int x, int y, Color color) {
+		image.setRGB(x, y, color.getRGB());
+		
+		// Update progress bar on EDT every 10%
+		progress++;
+		if (progress % progressInterval == 0) {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					progressBar.setValue(progress);
+				}
+			});
+		}
 	}
 
-	public Light getAmbientLight() {
-		return ambientLight;
+	public BufferedImage getImage() {
+		return image;
 	}
 
-	public void setAmbientLight(Light ambientLight) {
-		this.ambientLight = ambientLight;
+	public void setProgressBar(JProgressBar progressBar) {
+		this.progressBar = progressBar;
 	}
 }

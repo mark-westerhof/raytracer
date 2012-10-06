@@ -1,13 +1,21 @@
 package raytracer.gui;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -16,10 +24,11 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.border.EmptyBorder;
 
+import raytracer.raytrace.RayTracer;
 import raytracer.scene.Scene;
 import raytracer.scene.SceneReader;
 import raytracer.scene.exception.SceneException;
@@ -72,12 +81,13 @@ public class Main extends JFrame {
 
 	public Main() {
 		setTitle("Raytracer");
+		setSize(500, 350);
+		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 500, 350);
 		panel = new JPanel();
-		panel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(panel);
 		panel.setLayout(null);
+		getContentPane().add(panel);
+		setIconImage(new ImageIcon(getClass().getResource("/picture.png")).getImage());
 
 		fileField = new JTextField();
 		fileField.setEditable(false);
@@ -100,12 +110,14 @@ public class Main extends JFrame {
 		progressBar = new JProgressBar();
 		progressBar.setEnabled(false);
 		progressBar.setValue(0);
-		progressBar.setBounds(12, 316, 474, 22);
+		progressBar.setStringPainted(true);
+		progressBar.setBounds(12, 286, 474, 22);
 		panel.add(progressBar);
 
 		renderButton = new JButton("Render");
 		renderButton.setEnabled(false);
-		renderButton.setBounds(186, 283, 117, 25);
+		renderButton.setBounds(191, 249, 117, 25);
+		renderButton.addActionListener(new Render());
 		panel.add(renderButton);
 	}
 
@@ -116,18 +128,22 @@ public class Main extends JFrame {
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
 				final String fileName = file.getAbsolutePath();
+
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						fileField.setText(fileName);
 						fileSelectButton.setEnabled(false);
 						renderButton.setEnabled(false);
 						progressBar.setEnabled(false);
+						progressBar.setValue(0);
 						statusLabel.setText("Loading scene file...");
 						statusLabel.setForeground(Color.BLACK);
+						setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 					}
 				});
-				Runnable readerRunnable = new Runnable() {
-					public void run() {
+
+				new SwingWorker<Void, Integer>() {
+					protected Void doInBackground() throws Exception {
 						try {
 							scene = SceneReader.readSceneFile(fileName);
 							updateStatusLabel("Valid scene file", new Color(0, 100, 0));
@@ -144,14 +160,14 @@ public class Main extends JFrame {
 						catch (IOException e1) {
 							updateStatusLabel("Could not read file", Color.RED);
 						}
-						SwingUtilities.invokeLater(new Runnable() {
-							public void run() {
-								fileSelectButton.setEnabled(true);
-							}
-						});
+						return null;
 					}
-				};
-				new Thread(readerRunnable).start();
+
+					protected void done() {
+						fileSelectButton.setEnabled(true);
+						setCursor(null);
+					}
+				}.execute();
 			}
 		}
 	}
@@ -165,5 +181,60 @@ public class Main extends JFrame {
 				}
 			}
 		});
+	}
+
+	private class Render implements ActionListener {
+
+		public void actionPerformed(ActionEvent e) {
+			scene.setProgressBar(progressBar);
+
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					progressBar.setValue(0);
+					progressBar.setMaximum(scene.getCameraResolutionX() * scene.getCameraResolutionY());
+					fileSelectButton.setEnabled(false);
+					renderButton.setEnabled(false);
+					setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				}
+			});
+
+			new SwingWorker<Void, Integer>() {
+				long elapsedTime;
+
+				protected Void doInBackground() throws Exception {
+					long startTime = System.nanoTime();
+					RayTracer.traceScene(scene);
+					elapsedTime = System.nanoTime() - startTime;
+					return null;
+				}
+
+				protected void done() {
+					setCursor(null);
+					DecimalFormat df = new DecimalFormat("###.###");
+					String time = df.format((elapsedTime / 1000000000.0));
+					JFrame resultFrame = new JFrame("Rendered Image (" + time + "s)");
+					resultFrame.setIconImage(new ImageIcon(getClass().getResource("/picture.png")).getImage());
+					resultFrame.addWindowListener(new WindowAdapter() {
+						public void windowClosing(WindowEvent e) {
+							progressBar.setValue(0);
+							fileSelectButton.setEnabled(true);
+							renderButton.setEnabled(true);
+						}
+					});
+
+					resultFrame.setContentPane(new Panel() {
+						private static final long serialVersionUID = -6255056575929526644L;
+
+						public void paint(Graphics g) {
+							g.drawImage(scene.getImage(), 0, 0, null);
+						}
+
+					});
+					resultFrame.setSize(scene.getCameraResolutionX(), scene.getCameraResolutionY());
+					resultFrame.setLocationRelativeTo(null);
+					resultFrame.setVisible(true);
+				}
+			}.execute();
+		}
 	}
 }

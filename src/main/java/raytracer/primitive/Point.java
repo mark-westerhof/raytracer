@@ -23,4 +23,12 @@ public class Point {
 	public float getZ() {
 		return z;
 	}
+	
+	public Vector minus(Point point) {
+		float vectorX = this.x - point.getX();
+		float vectorY = this.y - point.getY();
+		float vectorZ = this.z - point.getZ();
+		
+		return new Vector(vectorX, vectorY, vectorZ);
+	}
 }

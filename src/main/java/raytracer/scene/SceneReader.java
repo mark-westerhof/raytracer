@@ -8,8 +8,9 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import raytracer.light.AmbientLight;
 import raytracer.light.Light;
-import raytracer.material.MaterialColor;
+import raytracer.material.Color;
 import raytracer.primitive.Point;
 import raytracer.primitive.Vector;
 import raytracer.scene.exception.SceneException;
@@ -28,7 +29,6 @@ public class SceneReader {
 		try {
 			JsonNode rootNode = mapper.readValue(file, JsonNode.class);
 			parseCamera(rootNode, scene);
-			parseSimpleLighting(rootNode, scene);
 		}
 		catch (JsonParseException e) {
 			throw new SceneException("Invalid JSON format");
@@ -83,24 +83,6 @@ public class SceneReader {
 		scene.setCameraResolutionY(yResolution.asInt());
 	}
 
-	private static void parseSimpleLighting(JsonNode rootNode, Scene scene) throws SceneException {
-
-		JsonNode background = rootNode.get("background");
-		if (background.isMissingNode()) {
-			throw new SceneException("Background color not present");
-		}
-		scene.setBackground(parseNodeToColor(background, "Background color"));
-
-		JsonNode ambientLight = rootNode.get("ambient-light");
-		if (ambientLight.isMissingNode()) {
-			throw new SceneException("Ambient light not present");
-		}
-		scene.setAmbientLight(parseNodeToLight(ambientLight, "Ambient light"));
-		if (!scene.getAmbientLight().isAmbientLight()) {
-			throw new SceneException("Ambient light should not have a position");
-		}
-	}
-
 	private static Vector parseNodeToVector(JsonNode array, String id) throws SceneException {
 
 		JsonNode xNode = array.path(0);
@@ -123,7 +105,7 @@ public class SceneReader {
 		return new Point((float) xNode.asDouble(), (float) yNode.asDouble(), (float) zNode.asDouble());
 	}
 
-	private static MaterialColor parseNodeToColor(JsonNode array, String id) throws SceneException {
+	private static Color parseNodeToColor(JsonNode array, String id) throws SceneException {
 
 		JsonNode redNode = array.path(0);
 		JsonNode greenNode = array.path(1);
@@ -131,27 +113,32 @@ public class SceneReader {
 		if (redNode.isMissingNode() || greenNode.isMissingNode() || blueNode.isMissingNode()) {
 			throw new SceneException(id + " could not be parsed as a color");
 		}
-		return new MaterialColor(redNode.asInt(), greenNode.asInt(), blueNode.asInt());
+		return new Color(redNode.asInt(), greenNode.asInt(), blueNode.asInt());
 	}
 
-	private static Light parseNodeToLight(JsonNode array, String id) throws SceneException {
+	private static Light parseNodeToLight(JsonNode lightNode) throws SceneException {
 
-		JsonNode redNode = array.path(0);
-		JsonNode greenNode = array.path(1);
-		JsonNode blueNode = array.path(2);
-		if (redNode.isMissingNode() || greenNode.isMissingNode() || blueNode.isMissingNode()) {
-			throw new SceneException(id + " could not be parsed as a light");
+		JsonNode typeNode = lightNode.get("type");
+		JsonNode colorNode = lightNode.get("color");
+		if (typeNode == null || colorNode == null) {
+			throw new SceneException("Light is missing type/color");
 		}
-		JsonNode xNode = array.path(3);
-		JsonNode yNode = array.path(4);
-		JsonNode zNode = array.path(5);
-		if (xNode.isMissingNode() || yNode.isMissingNode() || zNode.isMissingNode()) {
-			return new Light(redNode.asInt(), greenNode.asInt(), blueNode.asInt());
+
+		JsonNode redNode = colorNode.path(0);
+		JsonNode greenNode = colorNode.path(1);
+		JsonNode blueNode = colorNode.path(2);
+		if (redNode.isMissingNode() || greenNode.isMissingNode() || blueNode.isMissingNode()) {
+			throw new SceneException("Light color is of invalid format");
+		}
+
+		if (typeNode.asText() == "ambient") {
+			return new AmbientLight(redNode.asInt(), greenNode.asInt(), blueNode.asInt());
+		}
+		else if (typeNode.asText() == "point") {
+			return null;
 		}
 		else {
-			return new Light(redNode.asInt(), greenNode.asInt(), blueNode.asInt(), (float) xNode.asDouble(),
-					(float) yNode.asDouble(), (float) zNode.asDouble());
+			throw new SceneException("Invalid light type: '" + typeNode.asText() + "'");
 		}
 	}
-
 }
