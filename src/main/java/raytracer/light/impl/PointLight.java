@@ -4,7 +4,6 @@ import raytracer.light.Light;
 import raytracer.material.Color;
 import raytracer.material.PhongIllumination;
 import raytracer.object.SceneObject;
-import raytracer.object.impl.Sphere;
 import raytracer.primitive.Point;
 import raytracer.primitive.Vector;
 import raytracer.ray.impl.BasicRay;
@@ -27,21 +26,9 @@ public class PointLight implements Light {
 	public Color illuminateObject(Point intersectionPoint, Scene scene, int objectIndex) {
 
 		SceneObject hitObject = scene.getObject(objectIndex);
-		if (hitObject instanceof Sphere) {
-			return illuminateSphere(intersectionPoint, scene, objectIndex);
-		}
-		else {
-			// TODO
-			return null;
-		}
-
-	}
-
-	private Color illuminateSphere(Point intersectionPoint, Scene scene, int objectIndex) {
-		Sphere sphere = (Sphere) scene.getObject(objectIndex);
 		Color color = Color.BLACK;
 
-		Vector normal = intersectionPoint.minus(sphere.getOrigin()).normalized();
+		Vector normal = hitObject.getSurfaceNormal(intersectionPoint);
 		Vector lightDistance = this.origin.minus(intersectionPoint);
 
 		// Is the surface normal and light direction even facing the same way?
@@ -63,8 +50,8 @@ public class PointLight implements Light {
 
 			// Not in shadow, illuminate
 			if (!inShadow) {
-				Color materialColor = sphere.getMaterial().getColor();
-				PhongIllumination phong = sphere.getMaterial().getPhongIllumination();
+				Color materialColor = hitObject.getMaterial().getColor();
+				PhongIllumination phong = hitObject.getMaterial().getPhongIllumination();
 
 				// Calculate light fall off
 				float fallOff = (float) Math.sqrt((Math.pow(lightDistance.getX(), 2)
@@ -81,9 +68,20 @@ public class PointLight implements Light {
 				int blue = (int) (diffuseValue * materialColor.getBlue() * fallOffBlue);
 				color = color.add(new Color(red, green, blue));
 
-				// Calculate specular componenet
-				// TODO
-
+				// Calculate specular component
+				if (phong.getSpecularConstant() > 0) {
+					lightDistance.normalize();
+					Vector r = lightDistance.minus(normal.times(2 * lightDistance.dotProduct(normal)));
+					Vector v = intersectionPoint.minus(scene.getCameraOrigin()).normalized();
+					if (r.dotProduct(v) > 0) {
+						float specularValue = (float) Math.pow(v.dotProduct(r), phong.getShininess())
+								* phong.getSpecularConstant();
+						red = (int) (specularValue * 255 * fallOffRed);
+						green = (int) (specularValue * 255 * fallOffGreen);
+						blue = (int) (specularValue * 255 * fallOffBlue);
+						color = color.add(new Color(red, green, blue));
+					}
+				}
 			}
 		}
 		return color;

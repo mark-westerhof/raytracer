@@ -27,9 +27,9 @@
 					"color" : [0, 0.8, 0],
 					"phong": {
 						"ambient": 0.2,
-						"diffuse": 1,
-						"specular": 0,
-						"shininess": 1
+						"diffuse": 0.8,
+						"specular": 0.5,
+						"shininess": 10
 					},
 					"transmittance": 0,
 					"refraction": 1
@@ -45,9 +45,9 @@
 					"color" : [0, 0, 0.8],
 					"phong": {
 						"ambient": 0.2,
-						"diffuse": 1,
-						"specular": 0,
-						"shininess": 1
+						"diffuse": 0.8,
+						"specular": 0.5,
+						"shininess": 10
 					},
 					"transmittance": 0,
 					"refraction": 1
@@ -63,9 +63,9 @@
 					"color" : [0.8, 0, 0],
 					"phong": {
 						"ambient": 0.2,
-						"diffuse": 1,
-						"specular": 0,
-						"shininess": 1
+						"diffuse": 0.8,
+						"specular": 0.5,
+						"shininess": 10
 					},
 					"transmittance": 0,
 					"refraction": 1

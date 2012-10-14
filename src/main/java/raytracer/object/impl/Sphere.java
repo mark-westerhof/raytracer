@@ -33,8 +33,8 @@ public class Sphere implements SceneObject {
 	public Float intersectionDistance(Ray ray) {
 
 		Vector distance = this.origin.minus(ray.getOrigin());
-		float b = ray.getDirection().times(distance);
-		float d = (b * b) - distance.times(distance) + (this.radius * this.radius);
+		float b = ray.getDirection().dotProduct(distance);
+		float d = (b * b) - distance.dotProduct(distance) + (this.radius * this.radius);
 		if (d < 0) {
 			return null;
 		}
@@ -56,5 +56,10 @@ public class Sphere implements SceneObject {
 			}
 		}
 		return returnValue;
+	}
+	
+	public Vector getSurfaceNormal(Point intersectionPoint) {
+		
+		return intersectionPoint.minus(this.origin).normalized();
 	}
 }

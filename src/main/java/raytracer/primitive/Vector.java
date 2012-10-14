@@ -65,8 +65,8 @@ public class Vector {
 	public Vector plus(Vector vector) {
 		return new Vector(this.x + vector.getX(), this.y + vector.getY(), this.z + vector.getZ());
 	}
-
-	public float times(Vector vector) {
-		return (this.x * vector.getX()) + (this.y * vector.getY()) + (this.z * vector.getZ());
+	
+	public Vector minus(Vector vector) {
+		return new Vector(this.x - vector.getX(), this.y - vector.getY(), this.z - vector.getZ());
 	}
 }
