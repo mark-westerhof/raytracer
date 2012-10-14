@@ -31,12 +31,25 @@ public class Vector {
 
 		return new Vector(vx, vy, vz);
 	}
+	
+	public float dotProduct(Vector vector) {
+		return (this.x * vector.getX()) + (this.y * vector.getY()) + (this.z * vector.getZ());
+	}
 
 	public void normalize() {
-		float a = (float) Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
+		float a = (float) Math.abs(Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z)));
 		this.x = this.x / a;
 		this.y = this.y / a;
 		this.z = this.z / a;
+	}
+	
+	public Vector normalized() {
+		float a = (float) Math.abs(Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z)));
+		float vx = this.x / a;
+		float vy = this.y / a;
+		float vz = this.z / a;
+		
+		return new Vector(vx, vy, vz);
 	}
 
 	public void invert() {

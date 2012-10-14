@@ -11,6 +11,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import raytracer.light.Light;
 import raytracer.light.impl.AmbientLight;
+import raytracer.light.impl.PointLight;
 import raytracer.material.Color;
 import raytracer.material.Material;
 import raytracer.material.PhongIllumination;
@@ -161,10 +162,16 @@ public class SceneReader {
 		}
 
 		if (typeNode.asText().equals("ambient")) {
-			return new AmbientLight(redNode.asInt(), greenNode.asInt(), blueNode.asInt());
+			return new AmbientLight((float) redNode.asDouble(), (float) greenNode.asDouble(),
+					(float) blueNode.asDouble());
 		}
 		else if (typeNode.asText().equals("point")) {
-			return null;
+			JsonNode originNode = lightNode.get("origin");
+			if (originNode == null) {
+				throw new SceneException("Point light is missing 'origin'");
+			}
+			return new PointLight((float) redNode.asDouble(), (float) greenNode.asDouble(),
+					(float) blueNode.asDouble(), parseNodeToPoint(originNode, "Point light origin"));
 		}
 		else {
 			throw new SceneException("Invalid light type: '" + typeNode.asText() + "'");
@@ -181,8 +188,8 @@ public class SceneReader {
 			throw new SceneException("Phong is missing 'ambient', 'diffuse', 'specular', or 'shininess'");
 		}
 
-		return new PhongIllumination(ambientNode.asLong(), diffuseNode.asLong(), specularNode.asLong(),
-				shininessNode.asLong());
+		return new PhongIllumination((float) ambientNode.asDouble(), (float) diffuseNode.asDouble(),
+				(float) specularNode.asDouble(), (float) shininessNode.asDouble());
 	}
 
 	private static Material parseNodeToMaterial(JsonNode materialNode) throws SceneException {
@@ -197,7 +204,7 @@ public class SceneReader {
 		}
 
 		return new Material(parseNodeToColor(colorNode, "Material"), parseNodeToPhong(phongNode),
-				transmittance.asLong(), indexOfRefraction.asLong());
+				(float) transmittance.asDouble(), (float) indexOfRefraction.asDouble());
 	}
 
 	private static Sphere parseNodeToSphere(JsonNode sphereNode) throws SceneException {
@@ -209,7 +216,7 @@ public class SceneReader {
 		if (originNode == null || radiusNode == null || materialNode == null) {
 			throw new SceneException("Sphere is missing 'origin', 'radius', or 'material'");
 		}
-		return new Sphere(parseNodeToPoint(originNode, "Sphere origin"), radiusNode.asLong(),
+		return new Sphere(parseNodeToPoint(originNode, "Sphere origin"), (float) radiusNode.asDouble(),
 				parseNodeToMaterial(materialNode));
 
 	}

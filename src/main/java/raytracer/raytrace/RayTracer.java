@@ -4,8 +4,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import raytracer.primitive.Point;
-import raytracer.primitive.Ray;
 import raytracer.primitive.Vector;
+import raytracer.ray.impl.TraceRay;
 import raytracer.scene.Scene;
 
 public class RayTracer {
@@ -56,7 +56,7 @@ public class RayTracer {
 				Vector direction = forward.plus(cameraY.times(yPixel * yStep));
 				direction = direction.plus(cameraX.times(xPixel * xStep));
 				direction.normalize();
-				Ray traceRay = new Ray(origin, direction, scene, xPixel, yPixel);
+				TraceRay traceRay = new TraceRay(origin, direction, scene, xPixel, yPixel);
 				executer.execute(traceRay);
 			}
 		}

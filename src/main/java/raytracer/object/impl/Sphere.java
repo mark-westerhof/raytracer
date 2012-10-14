@@ -3,8 +3,8 @@ package raytracer.object.impl;
 import raytracer.material.Material;
 import raytracer.object.SceneObject;
 import raytracer.primitive.Point;
-import raytracer.primitive.Ray;
 import raytracer.primitive.Vector;
+import raytracer.ray.Ray;
 
 public class Sphere implements SceneObject {
 
@@ -42,14 +42,19 @@ public class Sphere implements SceneObject {
 		float t0 = (float) (b - Math.sqrt(d));
 		float t1 = (float) (b + Math.sqrt(d));
 		
+		Float returnValue = null;
+		
 		if (t0 > 0) {
-			return t0;
+			returnValue = t0;
 		}
-		else if (t1 > 0) {
-			return t1;
+		if (t1 > 0) {
+			if (returnValue == null) {
+				returnValue = t1;
+			}
+			else if (t1 < returnValue) {
+				returnValue = t1;
+			}
 		}
-		else {
-			return null;
-		}
+		return returnValue;
 	}
 }

@@ -1,11 +1,14 @@
-package raytracer.primitive;
+package raytracer.ray.impl;
 
 import raytracer.light.Light;
 import raytracer.material.Color;
 import raytracer.object.SceneObject;
+import raytracer.primitive.Point;
+import raytracer.primitive.Vector;
+import raytracer.ray.Ray;
 import raytracer.scene.Scene;
 
-public class Ray implements Runnable {
+public class TraceRay implements Ray, Runnable {
 
 	private Point origin;
 	private Vector direction;
@@ -14,7 +17,7 @@ public class Ray implements Runnable {
 	private int pixelY;
 	private int traceDepth;
 
-	public Ray(Point origin, Vector direction, Scene scene, int pixelX, int pixelY) {
+	public TraceRay(Point origin, Vector direction, Scene scene, int pixelX, int pixelY) {
 		this.origin = origin;
 		this.direction = direction;
 		this.scene = scene;
