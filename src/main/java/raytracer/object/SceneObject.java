@@ -1,9 +1,12 @@
 package raytracer.object;
 
+import raytracer.material.Material;
 import raytracer.primitive.Ray;
 
 public interface SceneObject {
 	
-	public int intersectionDistance(Ray ray);
+	public Float intersectionDistance(Ray ray);
+	
+	public Material getMaterial();
 
 }

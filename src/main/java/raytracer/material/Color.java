@@ -9,6 +9,10 @@ public class Color {
 	private int green;
 	private int blue;
 
+	public Color(float red, float green, float blue) {
+		this((int) (red * 255), (int) (green * 255), (int) (blue * 255));
+	}
+
 	public Color(int red, int green, int blue) {
 		this.red = verifyColorBoundaries(red);
 		this.green = verifyColorBoundaries(green);

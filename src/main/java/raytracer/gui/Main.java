@@ -3,24 +3,26 @@ package raytracer.gui;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.EventQueue;
-import java.awt.Graphics;
-import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowStateListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -40,7 +42,7 @@ public class Main extends JFrame {
 	private final JPanel panel;
 	private final JTextField fileField;
 	private final JButton fileSelectButton;
-	private final JFileChooser fileChooser = new JFileChooser();
+	private final JFileChooser sceneFileChooser;
 	private final JProgressBar progressBar;
 	private final JLabel statusLabel;
 	private final JButton renderButton;
@@ -119,15 +121,18 @@ public class Main extends JFrame {
 		renderButton.setBounds(191, 249, 117, 25);
 		renderButton.addActionListener(new Render());
 		panel.add(renderButton);
+
+		sceneFileChooser = new JFileChooser();
+		sceneFileChooser.setFileFilter(new SceneFileFilter());
+		sceneFileChooser.setAcceptAllFileFilterUsed(false);
 	}
 
 	private class FileSelect implements ActionListener {
 
 		public void actionPerformed(ActionEvent e) {
-			int returnVal = fileChooser.showOpenDialog(Main.this);
+			int returnVal = sceneFileChooser.showOpenDialog(Main.this);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				File file = fileChooser.getSelectedFile();
-				final String fileName = file.getAbsolutePath();
+				final String fileName = sceneFileChooser.getSelectedFile().getAbsolutePath();
 
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
@@ -212,8 +217,11 @@ public class Main extends JFrame {
 					setCursor(null);
 					DecimalFormat df = new DecimalFormat("###.###");
 					String time = df.format((elapsedTime / 1000000000.0));
-					JFrame resultFrame = new JFrame("Rendered Image (" + time + "s)");
+					final JFrame resultFrame = new JFrame("Rendered Image (" + time + "s)");
 					resultFrame.setIconImage(new ImageIcon(getClass().getResource("/picture.png")).getImage());
+					JPanel resultPanel = new JPanel();
+					resultFrame.getContentPane().add(resultPanel);
+
 					resultFrame.addWindowListener(new WindowAdapter() {
 						public void windowClosing(WindowEvent e) {
 							progressBar.setValue(0);
@@ -222,15 +230,43 @@ public class Main extends JFrame {
 						}
 					});
 
-					resultFrame.setContentPane(new Panel() {
-						private static final long serialVersionUID = -6255056575929526644L;
-
-						public void paint(Graphics g) {
-							g.drawImage(scene.getImage(), 0, 0, null);
+					JLabel image = new JLabel(new ImageIcon(scene.getImage()));
+					image.setSize(scene.getCameraResolutionX(), scene.getCameraResolutionY());
+					final JPopupMenu popup = new JPopupMenu();
+					JMenuItem saveItem = new JMenuItem("Save as png...");
+					saveItem.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							PNGFileChooser imageFileChooser = new PNGFileChooser(sceneFileChooser.getSelectedFile());
+							int returnVal = imageFileChooser.showSaveDialog(resultFrame);
+							if (returnVal == JFileChooser.APPROVE_OPTION) {
+								File file = imageFileChooser.getSelectedFile();
+								try {
+									ImageIO.write(scene.getImage(), "png", file);
+								}
+								catch (IOException e1) {
+								}
+							}
+						}
+					});
+					popup.add(saveItem);
+					image.addMouseListener(new MouseAdapter() {
+						public void mousePressed(MouseEvent e) {
+							maybeShowPopup(e);
 						}
 
+						public void mouseReleased(MouseEvent e) {
+							maybeShowPopup(e);
+						}
+
+						private void maybeShowPopup(MouseEvent e) {
+							if (e.isPopupTrigger()) {
+								popup.show(e.getComponent(), e.getX(), e.getY());
+							}
+						}
 					});
-					resultFrame.setSize(scene.getCameraResolutionX(), scene.getCameraResolutionY());
+
+					resultPanel.add(image);
+					resultFrame.pack();
 					resultFrame.setLocationRelativeTo(null);
 					resultFrame.setVisible(true);
 				}

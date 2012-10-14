@@ -45,6 +45,7 @@
 				<configuration>
 					<archive>
 						<manifest>
+							<addClasspath>true</addClasspath>
 							<mainClass>raytracer.gui.Main</mainClass>
 						</manifest>
 					</archive>

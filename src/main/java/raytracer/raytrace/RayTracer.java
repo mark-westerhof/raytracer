@@ -24,11 +24,11 @@ public class RayTracer {
 		Vector cameraY = cameraX.crossProduct(forward);
 		cameraX.normalize();
 		cameraY.normalize();
-		cameraX.invert();
+		cameraY.invert();
 
 		// Get camera angles
 		float xAngle = scene.getCameraAngle();
-		float yAngle = xAngle * (scene.getCameraResolutionY() / scene.getCameraResolutionX());
+		float yAngle = xAngle * (scene.getCameraResolutionY() / (float) scene.getCameraResolutionX());
 		xAngle = (float) (xAngle * (Math.PI / 180));
 		yAngle = (float) (yAngle * (Math.PI / 180));
 

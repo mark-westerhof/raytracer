@@ -31,4 +31,12 @@ public class Point {
 		
 		return new Vector(vectorX, vectorY, vectorZ);
 	}
+	
+	public Point plus(Vector vector) {
+		float pointX = this.x + vector.getX();
+		float pointY = this.y + vector.getY();
+		float pointZ = this.z + vector.getZ();
+		
+		return new Point(pointX, pointY, pointZ);
+	}
 }

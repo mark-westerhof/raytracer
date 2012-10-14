@@ -1,11 +1,15 @@
 package raytracer.scene;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 
+import raytracer.light.Light;
 import raytracer.material.Color;
+import raytracer.object.SceneObject;
 import raytracer.primitive.Point;
 import raytracer.primitive.Vector;
 
@@ -18,6 +22,12 @@ public class Scene {
 	private float cameraAngle;
 	private int cameraResolutionX;
 	private int cameraResolutionY;
+
+	// Lights
+	private List<Light> lights = new ArrayList<Light>();
+
+	// Objects
+	private List<SceneObject> objects = new ArrayList<SceneObject>();
 
 	// Output image & progress bar for feedback
 	private BufferedImage image;
@@ -73,6 +83,30 @@ public class Scene {
 		this.cameraResolutionY = cameraResolutionY;
 	}
 
+	public Light getLight(int index) {
+		return this.lights.get(index);
+	}
+
+	public List<Light> getLights() {
+		return this.lights;
+	}
+
+	public void addLight(Light light) {
+		this.lights.add(light);
+	}
+
+	public SceneObject getObject(int index) {
+		return this.objects.get(index);
+	}
+
+	public List<SceneObject> getObjects() {
+		return this.objects;
+	}
+
+	public void addObject(SceneObject object) {
+		this.objects.add(object);
+	}
+
 	public void initialize() {
 		image = new BufferedImage(cameraResolutionX, cameraResolutionY, BufferedImage.TYPE_INT_RGB);
 		progressInterval = (int) (0.1 * cameraResolutionX * cameraResolutionY);
@@ -80,7 +114,7 @@ public class Scene {
 
 	public synchronized void updateImage(int x, int y, Color color) {
 		image.setRGB(x, y, color.getRGB());
-		
+
 		// Update progress bar on EDT every 10%
 		progress++;
 		if (progress % progressInterval == 0) {
