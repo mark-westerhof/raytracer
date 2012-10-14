@@ -9,11 +9,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
-import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -236,16 +234,9 @@ public class Main extends JFrame {
 					JMenuItem saveItem = new JMenuItem("Save as png...");
 					saveItem.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
-							PNGFileChooser imageFileChooser = new PNGFileChooser(sceneFileChooser.getSelectedFile());
-							int returnVal = imageFileChooser.showSaveDialog(resultFrame);
-							if (returnVal == JFileChooser.APPROVE_OPTION) {
-								File file = imageFileChooser.getSelectedFile();
-								try {
-									ImageIO.write(scene.getImage(), "png", file);
-								}
-								catch (IOException e1) {
-								}
-							}
+							PNGFileChooser imageFileChooser = new PNGFileChooser(sceneFileChooser.getSelectedFile(),
+									scene);
+							imageFileChooser.selectAndSave(resultFrame);
 						}
 					});
 					popup.add(saveItem);

@@ -1,22 +1,29 @@
 package raytracer.gui;
 
+import java.awt.Component;
 import java.io.File;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+
+import raytracer.scene.Scene;
 
 public class PNGFileChooser extends JFileChooser {
 
 	private static final long serialVersionUID = 2781518252046790019L;
 
-	public PNGFileChooser() {
+	private Scene scene;
+
+	public PNGFileChooser(Scene scene) {
 		super();
+		this.scene = scene;
 		setFileFilter(new PNGFileFilter());
 		setAcceptAllFileFilterUsed(false);
 	}
 
-	public PNGFileChooser(File originalSceneFile) {
-		this();
+	public PNGFileChooser(File originalSceneFile, Scene scene) {
+		this(scene);
 		String sceneFilePath = originalSceneFile.getAbsolutePath();
 		File defaultImage = new File(sceneFilePath.substring(0, sceneFilePath.lastIndexOf('.')) + ".png");
 		setSelectedFile(defaultImage);
@@ -58,11 +65,12 @@ public class PNGFileChooser extends JFileChooser {
 				JOptionPane.showMessageDialog(this, message, "Invalid PNG Extension", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-
-			if (!selectedFile.canWrite()) {
-				String message = "Cannot write to file " + selectedFile.getAbsolutePath();
-				JOptionPane.showMessageDialog(this, message, "Cannot Write To File", JOptionPane.ERROR_MESSAGE);
-				return;
+			try {
+				ImageIO.write(scene.getImage(), "png", selectedFile);
+			}
+			catch (Exception e) {
+				String message = "Failed to write " + selectedFile.getAbsolutePath();
+				JOptionPane.showMessageDialog(this, message, "Failed To Write File", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		super.approveSelection();
@@ -70,5 +78,9 @@ public class PNGFileChooser extends JFileChooser {
 
 	private boolean isValidExtension(File selectedFile) {
 		return selectedFile.getName().toLowerCase().endsWith(".png");
+	}
+
+	public void selectAndSave(Component parent) {
+		showSaveDialog(parent);
 	}
 }
