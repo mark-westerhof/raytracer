@@ -10,19 +10,19 @@ import raytracer.scene.Scene;
 
 public class TraceRay implements Ray, Runnable {
 
-	private Point origin;
-	private Vector direction;
-	private Scene scene;
-	private int pixelX;
-	private int pixelY;
+	protected Point origin;
+	protected Vector direction;
+	protected Scene scene;
+	protected int xPixel;
+	protected int yPixel;
 	private int traceDepth;
 
-	public TraceRay(Point origin, Vector direction, Scene scene, int pixelX, int pixelY) {
+	public TraceRay(Point origin, Vector direction, Scene scene, int xPixel, int yPixel) {
 		this.origin = origin;
 		this.direction = direction;
 		this.scene = scene;
-		this.pixelX = pixelX;
-		this.pixelY = pixelY;
+		this.xPixel = xPixel;
+		this.yPixel = yPixel;
 		this.traceDepth = 0;
 	}
 
@@ -35,36 +35,40 @@ public class TraceRay implements Ray, Runnable {
 	}
 
 	public void run() {
-		Color color = trace();
-		scene.updateImage(this.pixelX, this.pixelY, color);
+		Color color = trace(this);
+		scene.updateImage(this.xPixel, this.yPixel, color);
 	}
 
-	private Color trace() {
+	protected Color trace(Ray ray, int depth) {
 
 		// Find closest object intersection
 		int hitObject = -1;
 		float hitDistance = Float.MAX_VALUE;
 		int index = 0;
 		for (SceneObject object : scene.getObjects()) {
-			Float currentHitDistance = object.intersectionDistance(this);
+			Float currentHitDistance = object.intersectionDistance(ray);
 			if (currentHitDistance != null && currentHitDistance < hitDistance) {
 				hitObject = index;
 				hitDistance = currentHitDistance;
 			}
 			index++;
 		}
-		
+
 		// Hit object? Illuminate for each light in scene
 		if (hitObject >= 0) {
 			Point intersectionPoint = origin.plus(direction.times(hitDistance));
 			Color color = Color.BLACK;
 			for (Light light : scene.getLights()) {
-				 color = color.add(light.illuminateObject(intersectionPoint, scene, hitObject));
+				color = color.add(light.illuminateObject(intersectionPoint, scene, hitObject));
 			}
 			return color;
 		}
 		else {
 			return Color.BLACK;
 		}
+	}
+
+	protected Color trace(Ray ray) {
+		return trace(ray, 1);
 	}
 }

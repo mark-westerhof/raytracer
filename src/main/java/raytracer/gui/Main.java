@@ -32,6 +32,13 @@ import raytracer.raytrace.RayTracer;
 import raytracer.scene.Scene;
 import raytracer.scene.SceneReader;
 import raytracer.scene.exception.SceneException;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JCheckBox;
+import javax.swing.border.TitledBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EtchedBorder;
 
 public class Main extends JFrame {
 
@@ -44,6 +51,8 @@ public class Main extends JFrame {
 	private final JProgressBar progressBar;
 	private final JLabel statusLabel;
 	private final JButton renderButton;
+	private final JPanel optionsPanel;
+	private final JCheckBox superSampleCheckBox;
 
 	private Scene scene;
 
@@ -120,6 +129,25 @@ public class Main extends JFrame {
 		renderButton.addActionListener(new Render());
 		panel.add(renderButton);
 
+		optionsPanel = new JPanel();
+		optionsPanel.setEnabled(false);
+		optionsPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Options",
+				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
+		optionsPanel.setBounds(12, 83, 474, 154);
+		panel.add(optionsPanel);
+
+		superSampleCheckBox = new JCheckBox("Super Sample");
+		superSampleCheckBox.setToolTipText("Do a 9 ray sample per pixel instead of 1");
+		superSampleCheckBox.setEnabled(false);
+		GroupLayout gl_optionsPanel = new GroupLayout(optionsPanel);
+		gl_optionsPanel.setHorizontalGroup(gl_optionsPanel.createParallelGroup(Alignment.LEADING).addGroup(
+				gl_optionsPanel.createSequentialGroup().addContainerGap().addComponent(superSampleCheckBox)
+						.addContainerGap(113, Short.MAX_VALUE)));
+		gl_optionsPanel.setVerticalGroup(gl_optionsPanel.createParallelGroup(Alignment.LEADING).addGroup(
+				gl_optionsPanel.createSequentialGroup().addContainerGap().addComponent(superSampleCheckBox)
+						.addContainerGap(106, Short.MAX_VALUE)));
+		optionsPanel.setLayout(gl_optionsPanel);
+
 		sceneFileChooser = new JFileChooser();
 		sceneFileChooser.setFileFilter(new SceneFileFilter());
 		sceneFileChooser.setAcceptAllFileFilterUsed(false);
@@ -138,6 +166,8 @@ public class Main extends JFrame {
 						fileSelectButton.setEnabled(false);
 						renderButton.setEnabled(false);
 						progressBar.setEnabled(false);
+						optionsPanel.setEnabled(false);
+						superSampleCheckBox.setEnabled(false);
 						progressBar.setValue(0);
 						statusLabel.setText("Loading scene file...");
 						statusLabel.setForeground(Color.BLACK);
@@ -154,6 +184,9 @@ public class Main extends JFrame {
 								public void run() {
 									renderButton.setEnabled(true);
 									progressBar.setEnabled(true);
+									optionsPanel.setEnabled(true);
+									superSampleCheckBox.setEnabled(true);
+									
 								}
 							});
 						}
@@ -190,6 +223,7 @@ public class Main extends JFrame {
 
 		public void actionPerformed(ActionEvent e) {
 			scene.setProgressBar(progressBar);
+			scene.setSuperSampled(superSampleCheckBox.isSelected());
 
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
@@ -197,6 +231,8 @@ public class Main extends JFrame {
 					progressBar.setMaximum(scene.getCameraResolutionX() * scene.getCameraResolutionY());
 					fileSelectButton.setEnabled(false);
 					renderButton.setEnabled(false);
+					optionsPanel.setEnabled(false);
+					superSampleCheckBox.setEnabled(false);
 					setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				}
 			});
@@ -225,6 +261,8 @@ public class Main extends JFrame {
 							progressBar.setValue(0);
 							fileSelectButton.setEnabled(true);
 							renderButton.setEnabled(true);
+							optionsPanel.setEnabled(true);
+							superSampleCheckBox.setEnabled(true);
 						}
 					});
 

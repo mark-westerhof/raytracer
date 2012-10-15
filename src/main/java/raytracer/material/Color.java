@@ -14,9 +14,9 @@ public class Color {
 	}
 
 	public Color(int red, int green, int blue) {
-		this.red = verifyColorBoundaries(red);
-		this.green = verifyColorBoundaries(green);
-		this.blue = verifyColorBoundaries(blue);
+		this.red = red;
+		this.green = green;
+		this.blue = blue;
 	}
 
 	public int getRed() {
@@ -32,15 +32,22 @@ public class Color {
 	}
 
 	public Color add(Color color) {
-		int red = verifyColorBoundaries(this.getRed() + color.getRed());
-		int green = verifyColorBoundaries(this.getGreen() + color.getGreen());
-		int blue = verifyColorBoundaries(this.getBlue() + color.getBlue());
+		int red = this.red + color.getRed();
+		int green = this.green + color.getGreen();
+		int blue = this.blue + color.getBlue();
+		return new Color(red, green, blue);
+	}
+	
+	public Color divideBy(float value) {
+		int red = (int) (this.red / value);
+		int green = (int) (this.green / value);
+		int blue = (int) (this.blue / value);
 		return new Color(red, green, blue);
 	}
 
 	public int getRGB() {
-		return ((255 & 0xFF) << 24) | ((this.red & 0xFF) << 16) | ((this.green & 0xFF) << 8)
-				| ((this.blue & 0xFF) << 0);
+		return ((255 & 0xFF) << 24) | ((verifyColorBoundaries(this.red) & 0xFF) << 16)
+				| ((verifyColorBoundaries(this.green) & 0xFF) << 8) | ((verifyColorBoundaries(this.blue) & 0xFF) << 0);
 	}
 
 	private static int verifyColorBoundaries(int color) {

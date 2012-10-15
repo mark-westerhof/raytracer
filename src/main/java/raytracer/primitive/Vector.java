@@ -31,7 +31,7 @@ public class Vector {
 
 		return new Vector(vx, vy, vz);
 	}
-	
+
 	public float dotProduct(Vector vector) {
 		return (this.x * vector.getX()) + (this.y * vector.getY()) + (this.z * vector.getZ());
 	}
@@ -42,13 +42,13 @@ public class Vector {
 		this.y = this.y / a;
 		this.z = this.z / a;
 	}
-	
+
 	public Vector normalized() {
 		float a = (float) Math.abs(Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z)));
 		float vx = this.x / a;
 		float vy = this.y / a;
 		float vz = this.z / a;
-		
+
 		return new Vector(vx, vy, vz);
 	}
 
@@ -65,7 +65,11 @@ public class Vector {
 	public Vector plus(Vector vector) {
 		return new Vector(this.x + vector.getX(), this.y + vector.getY(), this.z + vector.getZ());
 	}
-	
+
+	public Vector plus(float value) {
+		return new Vector(this.x + value, this.y + value, this.z + value);
+	}
+
 	public Vector minus(Vector vector) {
 		return new Vector(this.x - vector.getX(), this.y - vector.getY(), this.z - vector.getZ());
 	}

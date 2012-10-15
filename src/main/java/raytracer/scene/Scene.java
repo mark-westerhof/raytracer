@@ -34,6 +34,9 @@ public class Scene {
 	private JProgressBar progressBar;
 	private int progress = 0;
 	private int progressInterval;
+	
+	// Options
+	private boolean superSampled = false;
 
 	public Point getCameraOrigin() {
 		return cameraOrigin;
@@ -113,6 +116,12 @@ public class Scene {
 	}
 
 	public synchronized void updateImage(int x, int y, Color color) {
+
+		// java.awt.Color javaColor = new java.awt.Color(image.getRGB(x, y));
+		// Color currentColor = new Color(javaColor.getRed(), javaColor.getGreen(), javaColor.getBlue());
+		// color = currentColor.add(color);
+		// pixelCount[x][y]++;
+
 		image.setRGB(x, y, color.getRGB());
 
 		// Update progress bar on EDT every 10%
@@ -132,5 +141,13 @@ public class Scene {
 
 	public void setProgressBar(JProgressBar progressBar) {
 		this.progressBar = progressBar;
+	}
+
+	public boolean isSuperSampled() {
+		return superSampled;
+	}
+
+	public void setSuperSampled(boolean superSampled) {
+		this.superSampled = superSampled;
 	}
 }
