@@ -1,0 +1,93 @@
+{
+	"camera": {
+		"origin": [-9, 6, 13],
+		"target": [0, 2.5, 1],
+		"up": [0, 1, 0],
+		"angle": 45,
+		"resolution": [300, 200]
+	},
+	"lights": [
+		{
+			"type": "ambient", 
+			"color": [1, 1, 1]
+		},
+		{
+			"type": "point",
+			"color": [10000, 10000, 10000],
+			"origin": [-30, 30, 100]
+		}
+	],
+	"objects": [
+		{
+			"type": "sphere",
+			"object": {
+				"origin": [0.5, 3.0, -1.5],
+				"radius": 1,
+				"material": {
+					"color" : [0, 0.8, 0],
+					"phong": {
+						"ambient": 0.2,
+						"diffuse": 0.8,
+						"specular": 0.5,
+						"shininess": 10
+					},
+					"transmittance": 0,
+					"refraction": 1
+				}
+			}
+		},
+		{
+			"type": "sphere",
+			"object": {
+				"origin": [3, 3, -1.5],
+				"radius": 1,
+				"material": {
+					"color" : [0, 0, 0.8],
+					"phong": {
+						"ambient": 0.2,
+						"diffuse": 0.8,
+						"specular": 0.5,
+						"shininess": 10
+					},
+					"transmittance": 0,
+					"refraction": 1
+				}
+			}
+		},
+		{
+			"type": "sphere",
+			"object": {
+				"origin": [2, 3, 0.5],
+				"radius": 1,
+				"material": {
+					"color" : [0.8, 0, 0],
+					"phong": {
+						"ambient": 0.2,
+						"diffuse": 0.8,
+						"specular": 0.5,
+						"shininess": 10
+					},
+					"transmittance": 0,
+					"refraction": 1
+				}
+			}
+		},
+		{
+			"type": "triangleMesh",
+			"object": {
+				"file": "objects/walls.obj",
+				"material": {
+					"color" : [0.8, 0, 0],
+					"phong": {
+						"ambient": 0.2,
+						"diffuse": 0.8,
+						"specular": 0.5,
+						"shininess": 10
+					},
+					"transmittance": 0,
+					"refraction": 1
+				}
+			}
+		}
+	]
+}

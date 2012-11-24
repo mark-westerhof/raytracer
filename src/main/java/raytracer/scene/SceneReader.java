@@ -17,9 +17,11 @@ import raytracer.material.Material;
 import raytracer.material.PhongIllumination;
 import raytracer.object.SceneObject;
 import raytracer.object.impl.Sphere;
+import raytracer.object.impl.TriangleMesh;
 import raytracer.primitive.Point;
 import raytracer.primitive.Vector;
 import raytracer.scene.exception.SceneException;
+import raytracer.scene.obj.OBJReader;
 
 public class SceneReader {
 
@@ -36,7 +38,7 @@ public class SceneReader {
 			JsonNode rootNode = mapper.readValue(file, JsonNode.class);
 			parseCamera(rootNode, scene);
 			parseLights(rootNode, scene);
-			parseObjects(rootNode, scene);
+			parseObjects(rootNode, scene, file);
 		}
 		catch (JsonParseException e) {
 			throw new SceneException("Invalid JSON format");
@@ -102,13 +104,13 @@ public class SceneReader {
 		}
 	}
 
-	private static void parseObjects(JsonNode rootNode, Scene scene) throws SceneException {
+	private static void parseObjects(JsonNode rootNode, Scene scene, File sceneFile) throws SceneException {
 
 		JsonNode objectsNode = rootNode.get("objects");
 		if (objectsNode != null) {
 			Iterator<JsonNode> objectsIterator = objectsNode.getElements();
 			while (objectsIterator.hasNext()) {
-				scene.addObject(parseNodeToObject(objectsIterator.next()));
+				scene.addObject(parseNodeToObject(objectsIterator.next(), sceneFile));
 			}
 		}
 	}
@@ -221,7 +223,22 @@ public class SceneReader {
 
 	}
 
-	private static SceneObject parseNodeToObject(JsonNode objectNode) throws SceneException {
+	private static TriangleMesh parseNodeToTriangleMesh(JsonNode triangleMeshNode, File sceneFile)
+			throws SceneException {
+
+		JsonNode fileNameNode = triangleMeshNode.get("file");
+		JsonNode materialNode = triangleMeshNode.get("material");
+
+		if (fileNameNode == null || materialNode == null) {
+			throw new SceneException("Triangle mesh is missing 'file' or 'material");
+		}
+
+		TriangleMesh triangleMesh = OBJReader.readOBJFile(fileNameNode.asText(), sceneFile);
+		//triangleMesh.setMaterial(parseNodeToMaterial(materialNode));
+		return triangleMesh;
+	}
+
+	private static SceneObject parseNodeToObject(JsonNode objectNode, File sceneFile) throws SceneException {
 
 		JsonNode objectType = objectNode.get("type");
 		JsonNode sceneObjectNode = objectNode.get("object");
@@ -232,6 +249,9 @@ public class SceneReader {
 
 		if (objectType.asText().equals("sphere")) {
 			return parseNodeToSphere(sceneObjectNode);
+		}
+		else if (objectType.asText().equals("triangleMesh")) {
+			return parseNodeToTriangleMesh(sceneObjectNode, sceneFile);
 		}
 		else {
 			throw new SceneException("Invalid object type: '" + objectType.asText() + "'");
