@@ -36,8 +36,6 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JCheckBox;
 import javax.swing.border.TitledBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EtchedBorder;
 
 public class Main extends JFrame {
@@ -186,7 +184,7 @@ public class Main extends JFrame {
 									progressBar.setEnabled(true);
 									optionsPanel.setEnabled(true);
 									superSampleCheckBox.setEnabled(true);
-									
+
 								}
 							});
 						}
@@ -259,6 +257,7 @@ public class Main extends JFrame {
 					resultFrame.addWindowListener(new WindowAdapter() {
 						public void windowClosing(WindowEvent e) {
 							progressBar.setValue(0);
+							scene.resetProgressBarState();
 							fileSelectButton.setEnabled(true);
 							renderButton.setEnabled(true);
 							optionsPanel.setEnabled(true);

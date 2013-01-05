@@ -2,6 +2,8 @@ package raytracer.object.impl;
 
 import raytracer.material.Material;
 import raytracer.object.SceneObject;
+import raytracer.primitive.IntersectionDistance;
+import raytracer.primitive.IntersectionPoint;
 import raytracer.primitive.Point;
 import raytracer.primitive.Vector;
 import raytracer.ray.Ray;
@@ -30,13 +32,13 @@ public class Sphere implements SceneObject {
 		return material;
 	}
 
-	public Float intersectionDistance(Ray ray) {
+	public IntersectionDistance intersectionDistance(Ray ray) {
 
 		Vector distance = this.origin.minus(ray.getOrigin());
 		float b = ray.getDirection().dotProduct(distance);
 		float d = (b * b) - distance.dotProduct(distance) + (this.radius * this.radius);
 		if (d < 0) {
-			return null;
+			return new IntersectionDistance(null);
 		}
 
 		float t0 = (float) (b - Math.sqrt(d));
@@ -55,10 +57,10 @@ public class Sphere implements SceneObject {
 				returnValue = t1;
 			}
 		}
-		return returnValue;
+		return new IntersectionDistance(returnValue);
 	}
 	
-	public Vector getSurfaceNormal(Point intersectionPoint) {
+	public Vector getSurfaceNormal(IntersectionPoint intersectionPoint) {
 		
 		return intersectionPoint.minus(this.origin).normalized();
 	}

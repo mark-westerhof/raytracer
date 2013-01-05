@@ -77,7 +77,7 @@
 			"object": {
 				"file": "objects/walls.obj",
 				"material": {
-					"color" : [0.8, 0, 0],
+					"color" : [0.4, 0.4, 0.4],
 					"phong": {
 						"ambient": 0.2,
 						"diffuse": 0.8,

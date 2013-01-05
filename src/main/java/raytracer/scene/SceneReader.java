@@ -234,7 +234,7 @@ public class SceneReader {
 		}
 
 		TriangleMesh triangleMesh = OBJReader.readOBJFile(fileNameNode.asText(), sceneFile);
-		//triangleMesh.setMaterial(parseNodeToMaterial(materialNode));
+		triangleMesh.setMaterial(parseNodeToMaterial(materialNode));
 		return triangleMesh;
 	}
 

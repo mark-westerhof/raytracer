@@ -4,6 +4,7 @@ import raytracer.light.Light;
 import raytracer.material.Color;
 import raytracer.material.PhongIllumination;
 import raytracer.object.SceneObject;
+import raytracer.primitive.IntersectionPoint;
 import raytracer.primitive.Point;
 import raytracer.primitive.Vector;
 import raytracer.ray.impl.BasicRay;
@@ -23,7 +24,7 @@ public class PointLight implements Light {
 		this.origin = origin;
 	}
 
-	public Color illuminateObject(Point intersectionPoint, Scene scene, int objectIndex) {
+	public Color illuminateObject(IntersectionPoint intersectionPoint, Scene scene, int objectIndex) {
 
 		SceneObject hitObject = scene.getObject(objectIndex);
 		Color color = Color.BLACK;
@@ -41,7 +42,8 @@ public class PointLight implements Light {
 			int index = 0;
 			for (SceneObject object : scene.getObjects()) {
 				// Ignore own object
-				if (index != objectIndex && object.intersectionDistance(shadowCheckRay) != null) {
+				if (index != objectIndex
+						&& object.intersectionDistance(shadowCheckRay).getIntersectionDistance() != null) {
 					inShadow = true;
 					break;
 				}

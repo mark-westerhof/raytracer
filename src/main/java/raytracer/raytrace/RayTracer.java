@@ -6,7 +6,6 @@ import java.util.concurrent.Executors;
 import raytracer.primitive.Point;
 import raytracer.primitive.Vector;
 import raytracer.ray.RayFactory;
-import raytracer.ray.impl.SuperSampledTraceRay;
 import raytracer.ray.impl.TraceRay;
 import raytracer.scene.Scene;
 

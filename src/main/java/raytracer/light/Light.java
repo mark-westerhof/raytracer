@@ -1,11 +1,11 @@
 package raytracer.light;
 
 import raytracer.material.Color;
-import raytracer.primitive.Point;
+import raytracer.primitive.IntersectionPoint;
 import raytracer.scene.Scene;
 
 public interface Light {
 
-	public Color illuminateObject(Point intersectionPoint, Scene scene, int objectIndex);
+	public Color illuminateObject(IntersectionPoint intersectionPoint, Scene scene, int objectIndex);
 
 }

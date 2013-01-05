@@ -117,11 +117,6 @@ public class Scene {
 
 	public synchronized void updateImage(int x, int y, Color color) {
 
-		// java.awt.Color javaColor = new java.awt.Color(image.getRGB(x, y));
-		// Color currentColor = new Color(javaColor.getRed(), javaColor.getGreen(), javaColor.getBlue());
-		// color = currentColor.add(color);
-		// pixelCount[x][y]++;
-
 		image.setRGB(x, y, color.getRGB());
 
 		// Update progress bar on EDT every 10%
@@ -141,6 +136,10 @@ public class Scene {
 
 	public void setProgressBar(JProgressBar progressBar) {
 		this.progressBar = progressBar;
+	}
+	
+	public void resetProgressBarState() {
+		this.progress = 0;
 	}
 
 	public boolean isSuperSampled() {

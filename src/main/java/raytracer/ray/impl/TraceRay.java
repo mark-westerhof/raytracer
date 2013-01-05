@@ -3,6 +3,8 @@ package raytracer.ray.impl;
 import raytracer.light.Light;
 import raytracer.material.Color;
 import raytracer.object.SceneObject;
+import raytracer.primitive.IntersectionDistance;
+import raytracer.primitive.IntersectionPoint;
 import raytracer.primitive.Point;
 import raytracer.primitive.Vector;
 import raytracer.ray.Ray;
@@ -44,19 +46,23 @@ public class TraceRay implements Ray, Runnable {
 		// Find closest object intersection
 		int hitObject = -1;
 		float hitDistance = Float.MAX_VALUE;
+		Integer triangleMeshIndex = null;
 		int index = 0;
 		for (SceneObject object : scene.getObjects()) {
-			Float currentHitDistance = object.intersectionDistance(ray);
-			if (currentHitDistance != null && currentHitDistance < hitDistance) {
+			IntersectionDistance intersectionDistance = object.intersectionDistance(ray);
+			if (intersectionDistance.getIntersectionDistance() != null
+					&& intersectionDistance.getIntersectionDistance() < hitDistance) {
 				hitObject = index;
-				hitDistance = currentHitDistance;
+				hitDistance = intersectionDistance.getIntersectionDistance();
+				triangleMeshIndex = intersectionDistance.getTriangleMeshIndex();
 			}
 			index++;
 		}
 
 		// Hit object? Illuminate for each light in scene
 		if (hitObject >= 0) {
-			Point intersectionPoint = origin.plus(direction.times(hitDistance));
+			IntersectionPoint intersectionPoint = new IntersectionPoint(origin.plus(direction.times(hitDistance)),
+					triangleMeshIndex);
 			Color color = Color.BLACK;
 			for (Light light : scene.getLights()) {
 				color = color.add(light.illuminateObject(intersectionPoint, scene, hitObject));

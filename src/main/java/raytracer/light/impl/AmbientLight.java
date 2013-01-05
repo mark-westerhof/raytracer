@@ -2,7 +2,7 @@ package raytracer.light.impl;
 
 import raytracer.light.Light;
 import raytracer.material.Color;
-import raytracer.primitive.Point;
+import raytracer.primitive.IntersectionPoint;
 import raytracer.scene.Scene;
 
 public class AmbientLight implements Light {
@@ -17,7 +17,7 @@ public class AmbientLight implements Light {
 		this.blue = blue;
 	}
 
-	public Color illuminateObject(Point intersectionPoint, Scene scene, int objectIndex) {
+	public Color illuminateObject(IntersectionPoint intersectionPoint, Scene scene, int objectIndex) {
 
 		Color materialColor = scene.getObject(objectIndex).getMaterial().getColor();
 		float materialAmbient = scene.getObject(objectIndex).getMaterial().getPhongIllumination().getAmbientConstant();
