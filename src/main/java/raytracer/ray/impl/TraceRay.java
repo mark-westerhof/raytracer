@@ -17,15 +17,15 @@ public class TraceRay implements Ray, Runnable {
 	protected Scene scene;
 	protected int xPixel;
 	protected int yPixel;
-	private int traceDepth;
+	protected int traceDepth;
 
-	public TraceRay(Point origin, Vector direction, Scene scene, int xPixel, int yPixel) {
+	public TraceRay(Point origin, Vector direction, Scene scene, int xPixel, int yPixel, int traceDepth) {
 		this.origin = origin;
 		this.direction = direction;
 		this.scene = scene;
 		this.xPixel = xPixel;
 		this.yPixel = yPixel;
-		this.traceDepth = 0;
+		this.traceDepth = traceDepth;
 	}
 
 	public Point getOrigin() {
@@ -37,7 +37,7 @@ public class TraceRay implements Ray, Runnable {
 	}
 
 	public void run() {
-		Color color = trace(this);
+		Color color = trace();
 		scene.updateImage(this.xPixel, this.yPixel, color);
 	}
 
@@ -67,14 +67,26 @@ public class TraceRay implements Ray, Runnable {
 			for (Light light : scene.getLights()) {
 				color = color.add(light.illuminateObject(intersectionPoint, scene, hitObject));
 			}
-			return color;
+
+			// Reflect off?
+			float specularConstant = scene.getObject(hitObject).getMaterial().getPhongIllumination().getSpecularConstant();
+			if (specularConstant > 0 && depth <= traceDepth) {
+				this.origin = intersectionPoint;
+				Vector normal = scene.getObject(hitObject).getSurfaceNormal(intersectionPoint);
+				this.direction = this.direction.minus(normal.times(this.direction.dotProduct(normal)).times(2))
+						.normalized();
+				return color.add(trace(ray, depth + 1).times(specularConstant));
+			}
+			else {
+				return color;
+			}
 		}
 		else {
 			return Color.BLACK;
 		}
 	}
-
-	protected Color trace(Ray ray) {
-		return trace(ray, 1);
+	
+	public Color trace() {
+		return trace(this, 1);
 	}
 }

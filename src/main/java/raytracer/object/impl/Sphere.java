@@ -46,10 +46,10 @@ public class Sphere implements SceneObject {
 		
 		Float returnValue = null;
 		
-		if (t0 > 0) {
+		if (t0 > 0.1) {
 			returnValue = t0;
 		}
-		if (t1 > 0) {
+		if (t1 > 0.1) {
 			if (returnValue == null) {
 				returnValue = t1;
 			}

@@ -16,8 +16,8 @@ public class SuperSampledTraceRay extends TraceRay {
 	private Random generator;
 
 	public SuperSampledTraceRay(Point origin, Vector direction, Scene scene, int xPixel, int yPixel, Vector cameraX,
-			Vector cameraY, float xStep, float yStep) {
-		super(origin, direction, scene, xPixel, yPixel);
+			Vector cameraY, float xStep, float yStep, int traceDepth) {
+		super(origin, direction, scene, xPixel, yPixel, traceDepth);
 		this.cameraX = cameraX;
 		this.cameraY = cameraY;
 		this.xStep = xStep;
@@ -27,15 +27,26 @@ public class SuperSampledTraceRay extends TraceRay {
 
 	public void run() {
 
-		Color color = trace(this);
-		color = color.add(trace(new BasicRay(this.origin, createDirectionOffset(-0.5f, -0.5f))));
-		color = color.add(trace(new BasicRay(this.origin, createDirectionOffset(-0.5f, -0.1667f))));
-		color = color.add(trace(new BasicRay(this.origin, createDirectionOffset(-0.5f, 0.1667f))));
-		color = color.add(trace(new BasicRay(this.origin, createDirectionOffset(-0.1667f, 0.1667f))));
-		color = color.add(trace(new BasicRay(this.origin, createDirectionOffset(0.1667f, 0.1667f))));
-		color = color.add(trace(new BasicRay(this.origin, createDirectionOffset(0.1667f, -0.1667f))));
-		color = color.add(trace(new BasicRay(this.origin, createDirectionOffset(0.1667f, -0.5f))));
-		color = color.add(trace(new BasicRay(this.origin, createDirectionOffset(-0.1667f, -0.5f))));
+		Color color = Color.BLACK;
+		color = color.add(new TraceRay(origin, createDirectionOffset(-0.5f, -0.5f), scene, xPixel, yPixel, traceDepth)
+				.trace());
+		color = color.add(new TraceRay(origin, createDirectionOffset(-0.5f, -0.1667f), scene, xPixel, yPixel,
+				traceDepth).trace());
+		color = color
+				.add(new TraceRay(origin, createDirectionOffset(-0.5f, 0.1667f), scene, xPixel, yPixel, traceDepth)
+						.trace());
+		color = color.add(new TraceRay(origin, createDirectionOffset(-0.1667f, 0.1667f), scene, xPixel, yPixel,
+				traceDepth).trace());
+		color = color.add(new TraceRay(origin, createDirectionOffset(0.1667f, 0.1667f), scene, xPixel, yPixel,
+				traceDepth).trace());
+		color = color.add(new TraceRay(origin, createDirectionOffset(0.1667f, -0.1667f), scene, xPixel, yPixel,
+				traceDepth).trace());
+		color = color
+				.add(new TraceRay(origin, createDirectionOffset(0.1667f, -0.5f), scene, xPixel, yPixel, traceDepth)
+						.trace());
+		color = color.add(new TraceRay(origin, createDirectionOffset(-0.1667f, -0.5f), scene, xPixel, yPixel,
+				traceDepth).trace());
+		color.add(trace());
 
 		this.scene.updateImage(this.xPixel, this.yPixel, color.divideBy(9));
 	}

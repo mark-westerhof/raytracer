@@ -78,9 +78,9 @@ public class OBJReader {
 						}
 						// No texture coordinates
 						else {
-							int v1 = Integer.parseInt(split[0]) - 1;
-							int v2 = Integer.parseInt(split[1]) - 1;
-							int v3 = Integer.parseInt(split[2]) - 1;
+							int v1 = Integer.parseInt(split[1]) - 1;
+							int v2 = Integer.parseInt(split[2]) - 1;
+							int v3 = Integer.parseInt(split[3]) - 1;
 							if (v1 + 1 > vertices.size() || v1 < 0 || v2 + 1 > vertices.size() || v2 < 0
 									|| v3 + 1 > vertices.size() || v3 < 0) {
 								throw new Exception();

@@ -58,7 +58,7 @@ public class RayTracer {
 				direction = direction.plus(cameraX.times(xPixel * xStep));
 				direction.normalize();
 				TraceRay traceRay = RayFactory.createRay(origin, direction, scene, xPixel, yPixel, cameraX, cameraY,
-						xStep, yStep);
+						xStep, yStep, scene.getTraceDepth());
 				executer.execute(traceRay);
 			}
 		}

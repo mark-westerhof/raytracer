@@ -81,7 +81,41 @@
 					"phong": {
 						"ambient": 0.2,
 						"diffuse": 0.8,
-						"specular": 0.5,
+						"specular": 0,
+						"shininess": 10
+					},
+					"transmittance": 0,
+					"refraction": 1
+				}
+			}
+		},
+		{
+			"type": "triangleMesh",
+			"object": {
+				"file": "objects/plane.obj",
+				"material": {
+					"color" : [1, 1, 1],
+					"phong": {
+						"ambient": 0,
+						"diffuse": 0,
+						"specular": 0.8,
+						"shininess": 10
+					},
+					"transmittance": 0,
+					"refraction": 1
+				}
+			}
+		},
+		{
+			"type": "triangleMesh",
+			"object": {
+				"file": "objects/box.obj",
+				"material": {
+					"color" : [1, 1, 0.4],
+					"phong": {
+						"ambient": 0.2,
+						"diffuse": 0.8,
+						"specular": 0,
 						"shininess": 10
 					},
 					"transmittance": 0,

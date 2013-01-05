@@ -13,13 +13,14 @@ public class RayFactory {
 	}
 
 	public static TraceRay createRay(Point origin, Vector direction, Scene scene, int xPixel, int yPixel,
-			Vector cameraX, Vector cameraY, float xStep, float yStep) {
+			Vector cameraX, Vector cameraY, float xStep, float yStep, int traceDepth) {
 
 		if (scene.isSuperSampled()) {
-			return new SuperSampledTraceRay(origin, direction, scene, xPixel, yPixel, cameraX, cameraY, xStep, yStep);
+			return new SuperSampledTraceRay(origin, direction, scene, xPixel, yPixel, cameraX, cameraY, xStep, yStep,
+					traceDepth);
 		}
 		else {
-			return new TraceRay(origin, direction, scene, xPixel, yPixel);
+			return new TraceRay(origin, direction, scene, xPixel, yPixel, traceDepth);
 		}
 	}
 }

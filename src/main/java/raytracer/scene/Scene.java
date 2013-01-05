@@ -37,6 +37,7 @@ public class Scene {
 	
 	// Options
 	private boolean superSampled = false;
+	private int traceDepth = 7;
 
 	public Point getCameraOrigin() {
 		return cameraOrigin;
@@ -148,5 +149,13 @@ public class Scene {
 
 	public void setSuperSampled(boolean superSampled) {
 		this.superSampled = superSampled;
+	}
+
+	public int getTraceDepth() {
+		return traceDepth;
+	}
+
+	public void setTraceDepth(int traceDepth) {
+		this.traceDepth = traceDepth;
 	}
 }

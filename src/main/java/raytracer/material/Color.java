@@ -44,6 +44,13 @@ public class Color {
 		int blue = (int) (this.blue / value);
 		return new Color(red, green, blue);
 	}
+	
+	public Color times(float value) {
+		int red = (int) (this.red * value);
+		int green = (int) (this.green * value);
+		int blue = (int) (this.blue * value);
+		return new Color(red, green, blue);
+	}
 
 	public int getRGB() {
 		return ((255 & 0xFF) << 24) | ((verifyColorBoundaries(this.red) & 0xFF) << 16)
