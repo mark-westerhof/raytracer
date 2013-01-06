@@ -102,7 +102,7 @@ public class Main extends JFrame {
 		panel = new JPanel();
 		panel.setLayout(null);
 		getContentPane().add(panel);
-		// setIconImage(new ImageIcon(getClass().getResource("/picture.png")).getImage());
+		setIconImage(new ImageIcon(getClass().getResource("/resources/picture.png")).getImage());
 
 		fileField = new JTextField();
 		fileField.setEditable(false);
@@ -278,7 +278,8 @@ public class Main extends JFrame {
 					DecimalFormat df = new DecimalFormat("###.###");
 					String time = df.format((elapsedTime / 1000000000.0));
 					final JFrame resultFrame = new JFrame("Rendered Image (" + time + "s)");
-					// resultFrame.setIconImage(new ImageIcon(getClass().getResource("/picture.png")).getImage());
+					resultFrame
+							.setIconImage(new ImageIcon(getClass().getResource("/resources/picture.png")).getImage());
 					JPanel resultPanel = new JPanel();
 					resultFrame.getContentPane().add(resultPanel);
 

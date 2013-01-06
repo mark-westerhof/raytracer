@@ -113,14 +113,14 @@ public class Scene {
 
 	public void initialize() {
 		image = new BufferedImage(cameraResolutionX, cameraResolutionY, BufferedImage.TYPE_INT_RGB);
-		progressInterval = (int) (0.1 * cameraResolutionX * cameraResolutionY);
+		progressInterval = (int) (0.05 * cameraResolutionX * cameraResolutionY);
 	}
 
 	public synchronized void updateImage(int x, int y, Color color) {
 
 		image.setRGB(x, y, color.getRGB());
 
-		// Update progress bar on EDT every 10%
+		// Update progress bar on EDT every 5%
 		progress++;
 		if (progress % progressInterval == 0) {
 			SwingUtilities.invokeLater(new Runnable() {
