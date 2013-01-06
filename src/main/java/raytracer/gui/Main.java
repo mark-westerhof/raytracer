@@ -246,7 +246,7 @@ public class Main extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			scene.setProgressBar(progressBar);
 			scene.setSuperSampled(superSampleCheckBox.isSelected());
-			scene.setTraceDepth((int) traceDepthSpinner.getValue());
+			scene.setTraceDepth((Integer) traceDepthSpinner.getValue());
 
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
