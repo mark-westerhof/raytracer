@@ -15,6 +15,7 @@ import java.text.DecimalFormat;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -22,21 +23,26 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 
 import raytracer.raytrace.RayTracer;
 import raytracer.scene.Scene;
 import raytracer.scene.SceneReader;
 import raytracer.scene.exception.SceneException;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JCheckBox;
-import javax.swing.border.TitledBorder;
-import javax.swing.border.EtchedBorder;
+
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 public class Main extends JFrame {
 
@@ -51,6 +57,8 @@ public class Main extends JFrame {
 	private final JButton renderButton;
 	private final JPanel optionsPanel;
 	private final JCheckBox superSampleCheckBox;
+	private final JSpinner traceDepthSpinner;
+	private final JLabel traceDepthLabel;
 
 	private Scene scene;
 
@@ -133,18 +141,30 @@ public class Main extends JFrame {
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
 		optionsPanel.setBounds(12, 83, 474, 154);
 		panel.add(optionsPanel);
+		optionsPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("8dlu:grow"), FormFactory.DEFAULT_COLSPEC,
+				FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+				new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+						FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
 		superSampleCheckBox = new JCheckBox("Super Sample");
+		optionsPanel.add(superSampleCheckBox, "2, 2");
+		superSampleCheckBox.setVerticalAlignment(SwingConstants.BOTTOM);
 		superSampleCheckBox.setToolTipText("Do a 9 ray sample per pixel instead of 1");
 		superSampleCheckBox.setEnabled(false);
-		GroupLayout gl_optionsPanel = new GroupLayout(optionsPanel);
-		gl_optionsPanel.setHorizontalGroup(gl_optionsPanel.createParallelGroup(Alignment.LEADING).addGroup(
-				gl_optionsPanel.createSequentialGroup().addContainerGap().addComponent(superSampleCheckBox)
-						.addContainerGap(113, Short.MAX_VALUE)));
-		gl_optionsPanel.setVerticalGroup(gl_optionsPanel.createParallelGroup(Alignment.LEADING).addGroup(
-				gl_optionsPanel.createSequentialGroup().addContainerGap().addComponent(superSampleCheckBox)
-						.addContainerGap(106, Short.MAX_VALUE)));
-		optionsPanel.setLayout(gl_optionsPanel);
+
+		traceDepthLabel = new JLabel("MaxTrace Depth:");
+		traceDepthLabel.setToolTipText("The maximum amount of bounces for a ray (reflection)");
+		traceDepthLabel.setEnabled(false);
+		optionsPanel.add(traceDepthLabel, "4, 2");
+		traceDepthLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		traceDepthLabel.setVerticalAlignment(SwingConstants.BOTTOM);
+
+		traceDepthSpinner = new JSpinner();
+		traceDepthSpinner.setToolTipText("The maximum amount of bounces for a ray (reflection)");
+		optionsPanel.add(traceDepthSpinner, "6, 2");
+		traceDepthSpinner.setEnabled(false);
+		traceDepthSpinner.setModel(new SpinnerNumberModel(6, 0, 15, 1));
 
 		sceneFileChooser = new JFileChooser();
 		sceneFileChooser.setFileFilter(new SceneFileFilter());
@@ -166,6 +186,8 @@ public class Main extends JFrame {
 						progressBar.setEnabled(false);
 						optionsPanel.setEnabled(false);
 						superSampleCheckBox.setEnabled(false);
+						traceDepthLabel.setEnabled(false);
+						traceDepthSpinner.setEnabled(false);
 						progressBar.setValue(0);
 						statusLabel.setText("Loading scene file...");
 						statusLabel.setForeground(Color.BLACK);
@@ -184,6 +206,8 @@ public class Main extends JFrame {
 									progressBar.setEnabled(true);
 									optionsPanel.setEnabled(true);
 									superSampleCheckBox.setEnabled(true);
+									traceDepthLabel.setEnabled(true);
+									traceDepthSpinner.setEnabled(true);
 
 								}
 							});
@@ -222,6 +246,7 @@ public class Main extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			scene.setProgressBar(progressBar);
 			scene.setSuperSampled(superSampleCheckBox.isSelected());
+			scene.setTraceDepth((int) traceDepthSpinner.getValue());
 
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
@@ -231,6 +256,8 @@ public class Main extends JFrame {
 					renderButton.setEnabled(false);
 					optionsPanel.setEnabled(false);
 					superSampleCheckBox.setEnabled(false);
+					traceDepthLabel.setEnabled(false);
+					traceDepthSpinner.setEnabled(false);
 					setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				}
 			});
@@ -262,6 +289,8 @@ public class Main extends JFrame {
 							renderButton.setEnabled(true);
 							optionsPanel.setEnabled(true);
 							superSampleCheckBox.setEnabled(true);
+							traceDepthLabel.setEnabled(true);
+							traceDepthSpinner.setEnabled(true);
 						}
 					});
 

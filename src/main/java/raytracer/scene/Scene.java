@@ -37,7 +37,7 @@ public class Scene {
 	
 	// Options
 	private boolean superSampled = false;
-	private int traceDepth = 7;
+	private int traceDepth;
 
 	public Point getCameraOrigin() {
 		return cameraOrigin;
